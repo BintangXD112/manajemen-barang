@@ -36,3 +36,4 @@ class StoreBarangRequest extends FormRequest
     }
 }
 
+

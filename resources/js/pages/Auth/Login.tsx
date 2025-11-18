@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
 
 export default function Login() {
@@ -22,7 +22,10 @@ export default function Login() {
                             Masuk ke Akun Anda
                         </h2>
                         <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-                            Sistem Manajemen Barang
+                            Belum punya akun?{' '}
+                            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                                Daftar di sini
+                            </Link>
                         </p>
                     </div>
                     <form className="mt-8 space-y-6" onSubmit={submit}>

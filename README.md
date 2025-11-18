@@ -142,8 +142,8 @@ Ikutin langkah-langkah ini:
 ### 1️⃣ Clone Repository
 
 ```bash
-git clone <repository-url>
-cd manajemen-siswa
+git clone <https://github.com/BintangXD112/manajemen-barang>
+cd manajemen-barang
 ```
 
 ### 2️⃣ Install Dependencies

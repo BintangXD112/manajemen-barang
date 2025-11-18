@@ -21,3 +21,4 @@ class BarangFactory extends Factory
     }
 }
 
+
