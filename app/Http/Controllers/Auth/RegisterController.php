@@ -29,9 +29,7 @@ class RegisterController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
-
-        return redirect()->route('barang.index')->with('success', 'Registrasi berhasil!');
+        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login dengan akun Anda.');
     }
 }
 

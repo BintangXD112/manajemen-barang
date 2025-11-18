@@ -38,8 +38,7 @@ class KategoriController extends Controller
         
         $query->orderBy($sortBy, $sortOrder);
 
-        // Pagination with count
-        $kategoris = $query->withCount('barangs')->paginate(10)->withQueryString();
+        $kategoris = $query->withCount('barang')->paginate(10)->withQueryString();
 
         return Inertia::render('Kategori/Index', [
             'kategoris' => $kategoris,
@@ -63,8 +62,7 @@ class KategoriController extends Controller
 
     public function destroy(Kategori $kategori): RedirectResponse
     {
-        // Check if kategori has barangs
-        if ($kategori->barangs()->count() > 0) {
+        if ($kategori->barang()->count() > 0) {
             return redirect()->route('kategori.index')->with('error', 'Kategori tidak dapat dihapus karena masih memiliki barang.');
         }
 

@@ -15,47 +15,48 @@ class BarangController extends Controller
 {
     public function index(Request $request): Response
     {
-        $query = Barang::query();
+        $query = Barang::with('kategori');
 
-        // Search
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->whereRaw('LOWER(nama) LIKE ?', ['%'.strtolower($search).'%'])
                     ->orWhereRaw('LOWER(deskripsi) LIKE ?', ['%'.strtolower($search).'%'])
-                    ->orWhereRaw('LOWER(kategori) LIKE ?', ['%'.strtolower($search).'%']);
+                    ->orWhereHas('kategori', function ($q) use ($search) {
+                        $q->whereRaw('LOWER(nama) LIKE ?', ['%'.strtolower($search).'%']);
+                    });
             });
         }
 
-        // Filter by category
         if ($request->filled('kategori')) {
-            $query->where('kategori', $request->kategori);
+            $query->whereHas('kategori', function ($q) use ($request) {
+                $q->where('nama', $request->kategori);
+            });
         }
 
-        // Sorting
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
         
-        // Validate sort order
         $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'desc';
         
-        // Validate sort by - only allow specific columns
-        $allowedSortColumns = ['created_at', 'nama', 'harga', 'stok', 'kategori'];
+        $allowedSortColumns = ['created_at', 'nama', 'harga', 'stok'];
         $sortBy = in_array($sortBy, $allowedSortColumns) ? $sortBy : 'created_at';
         
-        $query->orderBy($sortBy, $sortOrder);
+        if ($sortBy === 'kategori') {
+            $query->leftJoin('kategori', 'barang.kategori_id', '=', 'kategori.id')
+                ->orderBy('kategori.nama', $sortOrder)
+                ->select('barang.*');
+        } else {
+            $query->orderBy($sortBy, $sortOrder);
+        }
 
-        // Pagination
         $barangs = $query->paginate(10)->withQueryString();
 
-        // Get unique categories for filter from barangs
-        $kategorisFilter = Barang::whereNotNull('kategori')
-            ->distinct()
-            ->pluck('kategori')
-            ->sort()
+        $kategorisFilter = Kategori::whereHas('barang')
+            ->orderBy('nama')
+            ->pluck('nama')
             ->values();
 
-        // Get all kategoris from kategoris table for dropdown
         $kategorisDropdown = Kategori::orderBy('nama')->get(['id', 'nama']);
 
         return Inertia::render('Barang/Index', [
@@ -68,20 +69,14 @@ class BarangController extends Controller
 
     public function store(StoreBarangRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        // Remove kategori_id from validated data as we use kategori (name) instead
-        unset($validated['kategori_id']);
-        Barang::create($validated);
+        Barang::create($request->validated());
 
         return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan.');
     }
 
     public function update(UpdateBarangRequest $request, Barang $barang): RedirectResponse
     {
-        $validated = $request->validated();
-        // Remove kategori_id from validated data as we use kategori (name) instead
-        unset($validated['kategori_id']);
-        $barang->update($validated);
+        $barang->update($request->validated());
 
         return redirect()->route('barang.index')->with('success', 'Barang berhasil diperbarui.');
     }

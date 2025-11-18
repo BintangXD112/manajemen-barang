@@ -4,13 +4,18 @@ import Layout from '../../components/Layout';
 import Modal from '../../components/Modal';
 import { confirmDelete, showError, showSuccess, showValidationErrors } from '../../lib/sweetalert';
 
+interface Kategori {
+    id: number;
+    nama: string;
+}
+
 interface Barang {
     id: number;
     nama: string;
     deskripsi: string | null;
     stok: number;
     harga: number;
-    kategori: string | null;
+    kategori: Kategori | null;
     created_at: string;
     updated_at: string;
 }
@@ -156,13 +161,12 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
     };
 
     const openEditModal = (barang: Barang) => {
-        const kategori = kategorisDropdown.find((k) => k.nama === barang.kategori);
         form.setData({
             nama: barang.nama,
             deskripsi: barang.deskripsi || '',
             stok: barang.stok,
             harga: barang.harga,
-            kategori_id: kategori?.id || null,
+            kategori_id: barang.kategori?.id || null,
         });
         setEditingBarang(barang);
         setShowModal(true);
@@ -474,7 +478,7 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                                                 <td className="whitespace-nowrap px-6 py-4">
                                                     {barang.kategori ? (
                                                         <span className="inline-flex rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                                            {barang.kategori}
+                                                            {barang.kategori.nama}
                                                         </span>
                                                     ) : (
                                                         <span className="text-sm text-gray-400">-</span>

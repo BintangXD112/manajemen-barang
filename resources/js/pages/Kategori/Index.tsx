@@ -10,7 +10,7 @@ interface Kategori {
     deskripsi: string | null;
     created_at: string;
     updated_at: string;
-    barangs_count?: number;
+    barang_count?: number;
 }
 
 interface PaginationLink {
@@ -366,7 +366,7 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4">
                                                     <span className="inline-flex rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                                        {kategori.barangs_count || 0} barang
+                                                        {kategori.barang_count || 0} barang
                                                     </span>
                                                 </td>
                                                 <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">

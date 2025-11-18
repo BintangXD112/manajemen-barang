@@ -8,21 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('barangs', function (Blueprint $table) {
+        Schema::create('barang', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
             $table->text('deskripsi')->nullable();
             $table->integer('stok');
             $table->decimal('harga', 10, 2);
-            $table->string('kategori')->nullable();
+            $table->foreignId('kategori_id')->nullable()->after('harga')->constrained('kategori')->nullOnDelete();
             $table->timestamps();
+            $table->index('kategori_id');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('barangs');
+        Schema::dropIfExists('barang');
     }
 };
-
 

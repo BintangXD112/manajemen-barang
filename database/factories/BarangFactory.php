@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Barang;
+use App\Models\Kategori;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BarangFactory extends Factory
@@ -16,7 +17,7 @@ class BarangFactory extends Factory
             'deskripsi' => fake()->sentence(),
             'stok' => fake()->numberBetween(0, 100),
             'harga' => fake()->randomFloat(2, 1000, 100000),
-            'kategori' => fake()->randomElement(['Elektronik', 'Pakaian', 'Makanan', 'Minuman', 'Lainnya']),
+            'kategori_id' => Kategori::inRandomOrder()->first()?->id,
         ];
     }
 }

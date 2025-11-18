@@ -17,9 +17,9 @@ class DashboardController extends Controller
         $totalStok = Barang::sum('stok');
         $totalNilai = Barang::sum(DB::raw('stok * harga'));
 
-        $barangTerbaru = Barang::latest()->limit(5)->get();
-        $kategoriPopuler = Kategori::withCount('barangs')
-            ->orderBy('barangs_count', 'desc')
+        $barangTerbaru = Barang::with('kategori')->latest()->limit(5)->get();
+        $kategoriPopuler = Kategori::withCount('barang')
+            ->orderBy('barang_count', 'desc')
             ->limit(5)
             ->get();
 

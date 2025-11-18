@@ -1,19 +1,24 @@
 import { Head, Link } from '@inertiajs/react';
 import Layout from '../components/Layout';
 
+interface Kategori {
+    id: number;
+    nama: string;
+}
+
 interface Barang {
     id: number;
     nama: string;
     stok: number;
     harga: number;
-    kategori: string | null;
+    kategori: Kategori | null;
     created_at: string;
 }
 
-interface Kategori {
+interface KategoriPopuler {
     id: number;
     nama: string;
-    barangs_count: number;
+    barang_count: number;
 }
 
 interface Props {
@@ -24,7 +29,7 @@ interface Props {
         total_nilai: number;
     };
     barang_terbaru: Barang[];
-    kategori_populer: Kategori[];
+    kategori_populer: KategoriPopuler[];
     auth: {
         user: {
             name: string;
@@ -180,7 +185,7 @@ export default function Dashboard({ stats, barang_terbaru, kategori_populer, aut
                                                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                                                     {barang.kategori && (
                                                         <span className="inline-flex rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-                                                            {barang.kategori}
+                                                            {barang.kategori.nama}
                                                         </span>
                                                     )}
                                                 </p>
@@ -219,7 +224,7 @@ export default function Dashboard({ stats, barang_terbaru, kategori_populer, aut
                                             </div>
                                             <div className="ml-4">
                                                 <span className="inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                                                    {kategori.barangs_count} barang
+                                                    {kategori.barang_count} barang
                                                 </span>
                                             </div>
                                         </div>
