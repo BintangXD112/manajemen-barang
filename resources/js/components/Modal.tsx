@@ -20,13 +20,10 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
 
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-            {/* Backdrop */}
             <div className="fixed inset-0 bg-black/50 transition-opacity" onClick={onClose} />
 
-            {/* Modal */}
             <div className="flex min-h-full items-center justify-center p-4">
                 <div className={`relative w-full ${sizes[size]} transform overflow-hidden rounded-lg bg-white shadow-xl transition-all dark:bg-gray-800`}>
-                    {/* Header */}
                     <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
                         <button
@@ -39,7 +36,6 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
                         </button>
                     </div>
 
-                    {/* Content */}
                     <div className="px-6 py-4">{children}</div>
                 </div>
             </div>

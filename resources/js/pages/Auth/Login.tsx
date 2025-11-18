@@ -17,28 +17,21 @@ export default function Login() {
     return (
         <>
             <Head title="Login" />
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 px-4 py-12 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 sm:px-6 lg:px-8">
-                <div className="w-full max-w-md">
-                    {/* Logo/Brand */}
-                    <div className="mb-8 text-center">
-                        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg dark:bg-indigo-500">
-                            <svg className="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
-                        </div>
-                        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            Masuk ke Akun Anda
-                        </h2>
-                        <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-                            Belum punya akun?{' '}
-                            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
-                                Daftar di sini
-                            </Link>
-                        </p>
-                    </div>
-
-                    {/* Card */}
+            <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-12 sm:px-6 lg:px-8">
+                <div className="auth-gradient dark:auth-gradient-dark fixed inset-0"></div>
+                <div className="relative z-10 w-full max-w-md">
                     <div className="rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800">
+                        <div className="mb-6 text-center">
+                            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-600 shadow-lg dark:bg-indigo-500">
+                                <svg className="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                            </div>
+                            <h2 className="mt-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                Masuk ke Akun Anda
+                            </h2>
+                        </div>
+
                         <form className="space-y-6" onSubmit={submit}>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -123,7 +116,7 @@ export default function Login() {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                                    className="flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:bg-indigo-700 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-indigo-500 dark:hover:bg-indigo-600"
                                 >
                                     {processing ? (
                                         <span className="flex items-center gap-2">
@@ -141,6 +134,15 @@ export default function Login() {
                                         'Masuk'
                                     )}
                                 </button>
+                            </div>
+
+                            <div className="pt-2 text-center">
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                    Belum punya akun?{' '}
+                                    <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
+                                        Daftar di sini
+                                    </Link>
+                                </p>
                             </div>
                         </form>
                     </div>

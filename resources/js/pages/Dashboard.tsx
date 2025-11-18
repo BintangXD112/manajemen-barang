@@ -46,7 +46,6 @@ export default function Dashboard({ stats, barang_terbaru, kategori_populer, aut
         <Layout>
             <Head title="Dashboard" />
             <div className="py-6">
-                {/* Page Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/20">
@@ -61,7 +60,6 @@ export default function Dashboard({ stats, barang_terbaru, kategori_populer, aut
                     </div>
                 </div>
 
-                {/* Stats Cards */}
                 <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
                         <div className="p-5">
@@ -158,9 +156,7 @@ export default function Dashboard({ stats, barang_terbaru, kategori_populer, aut
                     </div>
                 </div>
 
-                {/* Content Grid */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    {/* Barang Terbaru */}
                     <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
                         <div className="border-b border-gray-200 bg-white px-4 py-5 dark:border-gray-700 dark:bg-gray-800 sm:px-6">
                             <div className="flex items-center justify-between">
@@ -200,7 +196,6 @@ export default function Dashboard({ stats, barang_terbaru, kategori_populer, aut
                         </div>
                     </div>
 
-                    {/* Kategori Populer */}
                     <div className="overflow-hidden rounded-lg bg-white shadow dark:bg-gray-800">
                         <div className="border-b border-gray-200 bg-white px-4 py-5 dark:border-gray-700 dark:bg-gray-800 sm:px-6">
                             <div className="flex items-center justify-between">

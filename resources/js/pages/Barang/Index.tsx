@@ -58,7 +58,6 @@ interface Props {
 }
 
 export default function Index({ barangs, kategoris, kategorisDropdown, filters, auth, flash }: Props) {
-    // Validate and sanitize filter values
     const validSortOrder = filters.sort_order && ['asc', 'desc'].includes(filters.sort_order.toLowerCase()) 
         ? filters.sort_order.toLowerCase() 
         : 'desc';
@@ -85,7 +84,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
         kategori_id: null as number | null,
     });
 
-    // Debounced search
     useEffect(() => {
         const timeout = setTimeout(() => {
             if (data.search !== (filters.search || '')) {
@@ -99,9 +97,7 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
         return () => clearTimeout(timeout);
     }, [data.search]);
 
-    // Handle kategori and sort changes immediately
     useEffect(() => {
-        // Skip initial mount
         if (isInitialMount.current) {
             isInitialMount.current = false;
             return;
@@ -116,7 +112,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                 preserveScroll: true,
             });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data.kategori, data.sort_by, data.sort_order]);
 
     useEffect(() => {
@@ -161,7 +156,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
     };
 
     const openEditModal = (barang: Barang) => {
-        // Find kategori_id from kategori name
         const kategori = kategorisDropdown.find((k) => k.nama === barang.kategori);
         form.setData({
             nama: barang.nama,
@@ -249,7 +243,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
         <Layout>
             <Head title="Daftar Barang" />
             <div className="py-6">
-                {/* Page Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/20">
@@ -264,7 +257,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                     </div>
                 </div>
 
-                {/* Action Bar */}
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -282,10 +274,8 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                     </button>
                 </div>
 
-                {/* Filters & Search */}
                 <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-                        {/* Search */}
                         <div className="md:col-span-2">
                             <label htmlFor="search" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Cari Barang
@@ -307,7 +297,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                             </div>
                         </div>
 
-                        {/* Category Filter */}
                         <div>
                             <label htmlFor="kategori" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Kategori
@@ -329,7 +318,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                             </select>
                         </div>
 
-                        {/* Sort */}
                         <div>
                             <label htmlFor="sort_by" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Urutkan
@@ -377,7 +365,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                     )}
                 </div>
 
-                {/* Table */}
                 {barangs.data.length === 0 ? (
                     <div className="rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
                         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -532,7 +519,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                             </div>
                         </div>
 
-                        {/* Pagination */}
                         {barangs.last_page > 1 && (
                             <div className="mt-6 flex items-center justify-between">
                                 <div className="text-sm text-gray-700 dark:text-gray-300">
@@ -575,7 +561,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                 )}
             </div>
 
-            {/* Modal Create/Edit */}
             <Modal
                 isOpen={showModal}
                 onClose={() => {
@@ -637,11 +622,9 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                                 value={form.data.stok === 0 ? '' : form.data.stok.toString()}
                                 onChange={(e) => {
                                     let value = e.target.value;
-                                    // Remove leading zeros but keep the value if it's just "0"
                                     if (value.length > 1 && value.startsWith('0') && value !== '0') {
                                         value = value.replace(/^0+/, '');
                                     }
-                                    // Allow empty string or valid number
                                     if (value === '') {
                                         form.setData('stok', 0);
                                     } else {
@@ -652,7 +635,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                                     }
                                 }}
                                 onBlur={(e) => {
-                                    // Set to 0 if empty on blur
                                     if (e.target.value === '') {
                                         form.setData('stok', 0);
                                     }
@@ -682,11 +664,9 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                                     value={form.data.harga === 0 ? '' : form.data.harga.toString()}
                                     onChange={(e) => {
                                         let value = e.target.value;
-                                        // Remove leading zeros but keep the value if it's just "0"
                                         if (value.length > 1 && value.startsWith('0') && value !== '0') {
                                             value = value.replace(/^0+/, '');
                                         }
-                                        // Allow empty string or valid number
                                         if (value === '') {
                                             form.setData('harga', 0);
                                         } else {
@@ -697,7 +677,6 @@ export default function Index({ barangs, kategoris, kategorisDropdown, filters, 
                                         }
                                     }}
                                     onBlur={(e) => {
-                                        // Set to 0 if empty on blur
                                         if (e.target.value === '') {
                                             form.setData('harga', 0);
                                         }

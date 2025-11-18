@@ -28,14 +28,12 @@ export default function Layout({ children }: LayoutProps) {
 
     return (
         <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-            {/* Sidebar */}
             <aside
                 className={`hidden border-r border-gray-200 bg-white transition-all duration-300 dark:border-gray-700 dark:bg-gray-800 lg:block ${
                     sidebarOpen ? 'w-64' : 'w-20'
                 }`}
             >
                 <div className="flex h-full flex-col">
-                    {/* Logo/Brand */}
                     <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-700">
                         <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-600 dark:bg-indigo-500">
@@ -65,7 +63,6 @@ export default function Layout({ children }: LayoutProps) {
                         </button>
                     </div>
 
-                    {/* Menu */}
                     <div className="flex-1 overflow-y-auto px-3 py-4">
                         <div className="mb-4">
                             {sidebarOpen && (
@@ -98,7 +95,6 @@ export default function Layout({ children }: LayoutProps) {
                         </nav>
                     </div>
 
-                    {/* User Info */}
                     <div className="border-t border-gray-200 p-4 dark:border-gray-700">
                         {sidebarOpen ? (
                             <div className="space-y-3">
@@ -129,9 +125,7 @@ export default function Layout({ children }: LayoutProps) {
                 </div>
             </aside>
 
-            {/* Main Content */}
             <div className="flex flex-1 flex-col overflow-hidden">
-                {/* Top Navigation Bar */}
                 <header className="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
                     <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8">
                         <button
@@ -145,7 +139,6 @@ export default function Layout({ children }: LayoutProps) {
                     </div>
                 </header>
 
-                {/* Mobile menu */}
                 {mobileMenuOpen && (
                     <div className="lg:hidden">
                         <div className="space-y-1 border-b border-gray-200 bg-white px-2 pb-3 pt-2 dark:border-gray-700 dark:bg-gray-800">
@@ -170,7 +163,6 @@ export default function Layout({ children }: LayoutProps) {
                     </div>
                 )}
 
-                {/* Page Content */}
                 <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
                 </main>

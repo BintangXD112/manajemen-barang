@@ -48,7 +48,6 @@ interface Props {
 }
 
 export default function Index({ kategoris, filters, auth, flash }: Props) {
-    // Validate and sanitize filter values
     const validSortOrder = filters.sort_order && ['asc', 'desc'].includes(filters.sort_order.toLowerCase()) 
         ? filters.sort_order.toLowerCase() 
         : 'desc';
@@ -71,7 +70,6 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
         deskripsi: '',
     });
 
-    // Debounced search
     useEffect(() => {
         const timeout = setTimeout(() => {
             if (data.search !== (filters.search || '')) {
@@ -85,9 +83,7 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
         return () => clearTimeout(timeout);
     }, [data.search]);
 
-    // Handle sort changes immediately
     useEffect(() => {
-        // Skip initial mount
         if (isInitialMount.current) {
             isInitialMount.current = false;
             return;
@@ -101,7 +97,6 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
                 preserveScroll: true,
             });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data.sort_by, data.sort_order]);
 
     useEffect(() => {
@@ -207,7 +202,6 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
         <Layout>
             <Head title="Kelola Kategori" />
             <div className="py-6">
-                {/* Page Header */}
                 <div className="mb-8">
                     <div className="flex items-center gap-3">
                         <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/20">
@@ -222,7 +216,6 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
                     </div>
                 </div>
 
-                {/* Action Bar */}
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -240,10 +233,8 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
                     </button>
                 </div>
 
-                {/* Filters & Search */}
                 <div className="mb-6 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        {/* Search */}
                         <div className="md:col-span-2">
                             <label htmlFor="search" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Cari Kategori
@@ -265,7 +256,6 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
                             </div>
                         </div>
 
-                        {/* Sort */}
                         <div>
                             <label htmlFor="sort_by" className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                                 Urutkan
@@ -306,7 +296,6 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
                     )}
                 </div>
 
-                {/* Table */}
                 {kategoris.data.length === 0 ? (
                     <div className="rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm dark:border-gray-700 dark:bg-gray-800">
                         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -403,7 +392,6 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
                             </div>
                         </div>
 
-                        {/* Pagination */}
                         {kategoris.last_page > 1 && (
                             <div className="mt-6 flex items-center justify-between">
                                 <div className="text-sm text-gray-700 dark:text-gray-300">
@@ -446,7 +434,6 @@ export default function Index({ kategoris, filters, auth, flash }: Props) {
                 )}
             </div>
 
-            {/* Modal Create/Edit */}
             <Modal
                 isOpen={showModal}
                 onClose={() => {
