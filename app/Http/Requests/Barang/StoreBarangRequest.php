@@ -18,8 +18,25 @@ class StoreBarangRequest extends FormRequest
             'deskripsi' => ['nullable', 'string'],
             'stok' => ['required', 'integer', 'min:0'],
             'harga' => ['required', 'numeric', 'min:0'],
+            'kategori_id' => ['nullable', 'integer', 'exists:kategoris,id'],
             'kategori' => ['nullable', 'string', 'max:255'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        // Convert kategori_id to kategori name if provided
+        if ($this->has('kategori_id') && $this->kategori_id !== null && $this->kategori_id !== '') {
+            $kategori = \App\Models\Kategori::find($this->kategori_id);
+            if ($kategori) {
+                $this->merge(['kategori' => $kategori->nama]);
+            } else {
+                $this->merge(['kategori' => null]);
+            }
+        } else {
+            // If no kategori_id, set kategori to null
+            $this->merge(['kategori' => null]);
+        }
     }
 
     public function messages(): array

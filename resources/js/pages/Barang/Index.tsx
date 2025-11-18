@@ -1,8 +1,8 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { useEffect, useState } from 'react';
-import Alert from '../../components/Alert';
+import { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/Layout';
 import Modal from '../../components/Modal';
+import { confirmDelete, showError, showSuccess, showValidationErrors } from '../../lib/sweetalert';
 
 interface Barang {
     id: number;
@@ -30,9 +30,15 @@ interface PaginatedData {
     links: PaginationLink[];
 }
 
+interface KategoriDropdown {
+    id: number;
+    nama: string;
+}
+
 interface Props {
     barangs: PaginatedData;
     kategoris: string[];
+    kategorisDropdown: KategoriDropdown[];
     filters: {
         search?: string;
         kategori?: string;
@@ -51,31 +57,38 @@ interface Props {
     };
 }
 
-export default function Index({ barangs, kategoris, filters, auth, flash }: Props) {
+export default function Index({ barangs, kategoris, kategorisDropdown, filters, auth, flash }: Props) {
+    // Validate and sanitize filter values
+    const validSortOrder = filters.sort_order && ['asc', 'desc'].includes(filters.sort_order.toLowerCase()) 
+        ? filters.sort_order.toLowerCase() 
+        : 'desc';
+    const validSortBy = filters.sort_by && ['created_at', 'nama', 'harga', 'stok', 'kategori'].includes(filters.sort_by)
+        ? filters.sort_by
+        : 'created_at';
+
     const { data, setData, get, processing } = useForm({
         search: filters.search || '',
         kategori: filters.kategori || '',
-        sort_by: filters.sort_by || 'created_at',
-        sort_order: filters.sort_order || 'desc',
+        sort_by: validSortBy,
+        sort_order: validSortOrder,
     });
 
     const [showModal, setShowModal] = useState(false);
     const [editingBarang, setEditingBarang] = useState<Barang | null>(null);
-    const [showAlert, setShowAlert] = useState(false);
-    const [alertMessage, setAlertMessage] = useState('');
-    const [alertType, setAlertType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
+    const isInitialMount = useRef(true);
 
     const form = useForm({
         nama: '',
         deskripsi: '',
         stok: 0,
         harga: 0,
-        kategori: '',
+        kategori_id: null as number | null,
     });
 
+    // Debounced search
     useEffect(() => {
         const timeout = setTimeout(() => {
-            if (data.search !== filters.search) {
+            if (data.search !== (filters.search || '')) {
                 get('/barang', {
                     preserveState: true,
                     preserveScroll: true,
@@ -86,21 +99,43 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
         return () => clearTimeout(timeout);
     }, [data.search]);
 
+    // Handle kategori and sort changes immediately
+    useEffect(() => {
+        // Skip initial mount
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
+        const kategoriChanged = data.kategori !== (filters.kategori || '');
+        const sortChanged = data.sort_by !== (filters.sort_by || 'created_at') || data.sort_order !== (filters.sort_order || 'desc');
+
+        if (kategoriChanged || sortChanged) {
+            get('/barang', {
+                preserveState: true,
+                preserveScroll: true,
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data.kategori, data.sort_by, data.sort_order]);
+
     useEffect(() => {
         if (flash?.success) {
-            setAlertMessage(flash.success);
-            setAlertType('success');
-            setShowAlert(true);
+            showSuccess(flash.success);
         }
         if (flash?.error) {
-            setAlertMessage(flash.error);
-            setAlertType('error');
-            setShowAlert(true);
+            showError(flash.error);
         }
     }, [flash]);
 
     const handleFilter = () => {
         get('/barang', {
+            data: {
+                search: data.search || null,
+                kategori: data.kategori || null,
+                sort_by: data.sort_by,
+                sort_order: data.sort_order,
+            },
             preserveState: true,
             preserveScroll: true,
         });
@@ -126,12 +161,14 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
     };
 
     const openEditModal = (barang: Barang) => {
+        // Find kategori_id from kategori name
+        const kategori = kategorisDropdown.find((k) => k.nama === barang.kategori);
         form.setData({
             nama: barang.nama,
             deskripsi: barang.deskripsi || '',
             stok: barang.stok,
             harga: barang.harga,
-            kategori: barang.kategori || '',
+            kategori_id: kategori?.id || null,
         });
         setEditingBarang(barang);
         setShowModal(true);
@@ -144,14 +181,14 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
                 preserveScroll: true,
                 onSuccess: () => {
                     setShowModal(false);
-                    setAlertMessage('Barang berhasil diperbarui.');
-                    setAlertType('success');
-                    setShowAlert(true);
+                    showSuccess('Barang berhasil diperbarui.');
                 },
-                onError: () => {
-                    setAlertMessage('Gagal memperbarui barang. Periksa form Anda.');
-                    setAlertType('error');
-                    setShowAlert(true);
+                onError: (errors) => {
+                    if (Object.keys(errors).length > 0) {
+                        showValidationErrors(errors);
+                    } else {
+                        showError('Gagal memperbarui barang.');
+                    }
                 },
             });
         } else {
@@ -159,32 +196,29 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
                 preserveScroll: true,
                 onSuccess: () => {
                     setShowModal(false);
-                    setAlertMessage('Barang berhasil ditambahkan.');
-                    setAlertType('success');
-                    setShowAlert(true);
+                    showSuccess('Barang berhasil ditambahkan.');
                 },
-                onError: () => {
-                    setAlertMessage('Gagal menambahkan barang. Periksa form Anda.');
-                    setAlertType('error');
-                    setShowAlert(true);
+                onError: (errors) => {
+                    if (Object.keys(errors).length > 0) {
+                        showValidationErrors(errors);
+                    } else {
+                        showError('Gagal menambahkan barang.');
+                    }
                 },
             });
         }
     };
 
-    const handleDelete = (id: number) => {
-        if (confirm('Apakah Anda yakin ingin menghapus barang ini?')) {
+    const handleDelete = async (id: number, nama: string) => {
+        const result = await confirmDelete(`Apakah Anda yakin ingin menghapus "${nama}"?`);
+        if (result.isConfirmed) {
             router.delete(`/barang/${id}`, {
                 preserveScroll: true,
                 onSuccess: () => {
-                    setAlertMessage('Barang berhasil dihapus.');
-                    setAlertType('success');
-                    setShowAlert(true);
+                    showSuccess('Barang berhasil dihapus.');
                 },
                 onError: () => {
-                    setAlertMessage('Gagal menghapus barang.');
-                    setAlertType('error');
-                    setShowAlert(true);
+                    showError('Gagal menghapus barang.');
                 },
             });
         }
@@ -205,32 +239,46 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
             sort_by: 'created_at',
             sort_order: 'desc',
         });
-        get('/barang', {
+        router.get('/barang', {}, {
             preserveState: true,
             preserveScroll: true,
         });
     };
 
     return (
-        <Layout auth={auth}>
+        <Layout>
             <Head title="Daftar Barang" />
-            {showAlert && <Alert type={alertType} message={alertMessage} onClose={() => setShowAlert(false)} />}
+            <div className="py-6">
+                {/* Page Header */}
+                <div className="mb-8">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/20">
+                            <svg className="h-6 w-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Barang</h1>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Kelola daftar barang dan inventori</p>
+                        </div>
+                    </div>
+                </div>
 
-            <div className="p-6 lg:p-8">
-                {/* Header */}
+                {/* Action Bar */}
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Daftar Barang</h2>
-                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Total: {barangs.total} barang</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Total: <span className="font-semibold text-gray-700 dark:text-gray-300">{barangs.total}</span> barang
+                        </p>
                     </div>
                     <button
                         onClick={openCreateModal}
-                        className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-md dark:bg-indigo-500 dark:hover:bg-indigo-600"
                     >
-                        <svg className="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                         </svg>
-                        Tambah Barang
+                        <span>Tambah Barang</span>
                     </button>
                 </div>
 
@@ -269,7 +317,6 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
                                 value={data.kategori}
                                 onChange={(e) => {
                                     setData('kategori', e.target.value);
-                                    handleFilter();
                                 }}
                                 className="block w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             >
@@ -293,7 +340,6 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
                                 onChange={(e) => {
                                     const [field, order] = e.target.value.split('_');
                                     setData({ sort_by: field, sort_order: order });
-                                    handleFilter();
                                 }}
                                 className="block w-full rounded-lg border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                             >
@@ -472,7 +518,7 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
                                                             Edit
                                                         </button>
                                                         <button
-                                                            onClick={() => handleDelete(barang.id)}
+                                                            onClick={() => handleDelete(barang.id, barang.nama)}
                                                             className="text-red-600 transition-colors hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
                                                         >
                                                             Hapus
@@ -586,10 +632,31 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
                             </label>
                             <input
                                 id="modal-stok"
-                                type="number"
-                                min="0"
-                                value={form.data.stok}
-                                onChange={(e) => form.setData('stok', parseInt(e.target.value) || 0)}
+                                type="text"
+                                inputMode="numeric"
+                                value={form.data.stok === 0 ? '' : form.data.stok.toString()}
+                                onChange={(e) => {
+                                    let value = e.target.value;
+                                    // Remove leading zeros but keep the value if it's just "0"
+                                    if (value.length > 1 && value.startsWith('0') && value !== '0') {
+                                        value = value.replace(/^0+/, '');
+                                    }
+                                    // Allow empty string or valid number
+                                    if (value === '') {
+                                        form.setData('stok', 0);
+                                    } else {
+                                        const numValue = parseInt(value, 10);
+                                        if (!isNaN(numValue) && numValue >= 0) {
+                                            form.setData('stok', numValue);
+                                        }
+                                    }
+                                }}
+                                onBlur={(e) => {
+                                    // Set to 0 if empty on blur
+                                    if (e.target.value === '') {
+                                        form.setData('stok', 0);
+                                    }
+                                }}
                                 className={`mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm ${
                                     form.errors.stok ? 'border-red-500' : ''
                                 }`}
@@ -610,11 +677,31 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
                                 </div>
                                 <input
                                     id="modal-harga"
-                                    type="number"
-                                    min="0"
-                                    step="100"
-                                    value={form.data.harga}
-                                    onChange={(e) => form.setData('harga', parseFloat(e.target.value) || 0)}
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={form.data.harga === 0 ? '' : form.data.harga.toString()}
+                                    onChange={(e) => {
+                                        let value = e.target.value;
+                                        // Remove leading zeros but keep the value if it's just "0"
+                                        if (value.length > 1 && value.startsWith('0') && value !== '0') {
+                                            value = value.replace(/^0+/, '');
+                                        }
+                                        // Allow empty string or valid number
+                                        if (value === '') {
+                                            form.setData('harga', 0);
+                                        } else {
+                                            const numValue = parseFloat(value);
+                                            if (!isNaN(numValue) && numValue >= 0) {
+                                                form.setData('harga', numValue);
+                                            }
+                                        }
+                                    }}
+                                    onBlur={(e) => {
+                                        // Set to 0 if empty on blur
+                                        if (e.target.value === '') {
+                                            form.setData('harga', 0);
+                                        }
+                                    }}
                                     className={`block w-full rounded-lg border-gray-300 pl-10 pr-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm ${
                                         form.errors.harga ? 'border-red-500' : ''
                                     }`}
@@ -631,18 +718,23 @@ export default function Index({ barangs, kategoris, filters, auth, flash }: Prop
                         <label htmlFor="modal-kategori" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Kategori
                         </label>
-                        <input
+                        <select
                             id="modal-kategori"
-                            type="text"
-                            value={form.data.kategori}
-                            onChange={(e) => form.setData('kategori', e.target.value)}
+                            value={form.data.kategori_id || ''}
+                            onChange={(e) => form.setData('kategori_id', e.target.value ? parseInt(e.target.value) : null)}
                             className={`mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white sm:text-sm ${
-                                form.errors.kategori ? 'border-red-500' : ''
+                                form.errors.kategori_id ? 'border-red-500' : ''
                             }`}
-                            placeholder="Contoh: Elektronik, Pakaian, Makanan"
-                        />
-                        {form.errors.kategori && (
-                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{form.errors.kategori}</p>
+                        >
+                            <option value="">Pilih Kategori</option>
+                            {kategorisDropdown.map((kat) => (
+                                <option key={kat.id} value={kat.id}>
+                                    {kat.nama}
+                                </option>
+                            ))}
+                        </select>
+                        {form.errors.kategori_id && (
+                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{form.errors.kategori_id}</p>
                         )}
                     </div>
 
