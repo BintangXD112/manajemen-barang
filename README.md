@@ -52,23 +52,23 @@ Aplikasi manajemen barang ini dibangun pakai **Laravel 12** dan **React 19**, de
 
 ### 🔐 Autentikasi & Keamanan
 
-- ✅ **Login/Logout** dengan validasi form
-- ✅ **Rate Limiting** untuk mencegah brute force attack
-- ✅ **Session Management** yang aman
-- ✅ **CSRF Protection** otomatis
-- ✅ **Password Hashing** menggunakan bcrypt
+- ✅ Login/Logout dengan validasi form
+- ✅ Rate limiting buat cegah brute force attack
+- ✅ Session management yang aman
+- ✅ CSRF protection otomatis
+- ✅ Password hashing pakai bcrypt
 
 ### 📦 Manajemen Barang
 
-- ✅ **Daftar Barang** dengan tabel yang informatif
-- ✅ **Tambah Barang** dengan form validasi lengkap
-- ✅ **Edit Barang** untuk memperbarui informasi
-- ✅ **Hapus Barang** dengan konfirmasi
-- ✅ **Pencarian & Filter** (dapat dikembangkan lebih lanjut)
+- ✅ Daftar barang dengan tabel yang informatif
+- ✅ Tambah barang dengan form validasi lengkap
+- ✅ Edit barang buat update informasi
+- ✅ Hapus barang dengan konfirmasi
+- ✅ Pencarian & filter (bisa dikembangin lebih lanjut)
 
 ### 📊 Informasi Barang
 
-Setiap barang memiliki informasi lengkap:
+Setiap barang punya info lengkap:
 - 📝 Nama barang
 - 📄 Deskripsi
 - 📊 Stok tersedia
@@ -77,10 +77,10 @@ Setiap barang memiliki informasi lengkap:
 
 ### 🎨 User Interface
 
-- 🌓 **Dark Mode Support** - Tema gelap dan terang
-- 📱 **Responsive Design** - Mobile-first approach
-- 🎯 **Intuitive Navigation** - Navigasi yang mudah dipahami
-- ⚡ **Fast Loading** - Optimized untuk performa
+- 🌓 Dark mode support - tema gelap dan terang
+- 📱 Responsive design - bisa dipake dari HP atau laptop
+- 🎯 Navigasi yang gampang dipahami
+- ⚡ Loading cepat karena optimized
 
 ---
 
@@ -435,9 +435,9 @@ manajemen-siswa/
 
 ## 🧪 Testing
 
-Aplikasi menggunakan **Pest PHP** untuk testing.
+Aplikasi pakai **Pest PHP** buat testing.
 
-### Menjalankan Tests
+### Jalanin Tests
 
 ```bash
 # Semua tests
@@ -450,9 +450,9 @@ php artisan test --filter=LoginTest
 php artisan test --coverage
 ```
 
-### Menulis Tests
+### Nulis Tests
 
-Contoh test untuk authentication:
+Contoh test buat authentication:
 
 ```php
 it('can login with valid credentials', function () {
@@ -575,22 +575,22 @@ php artisan migrate:status
 
 ---
 
-## 🤝 Kontribusi
+## 🤝 Mau Kontribusi?
 
-Kontribusi sangat diterima! Berikut cara berkontribusi:
+Silakan! Caranya:
 
-1. **Fork** repository
-2. Buat **branch** untuk fitur baru (`git checkout -b feature/AmazingFeature`)
-3. **Commit** perubahan (`git commit -m 'Add some AmazingFeature'`)
-4. **Push** ke branch (`git push origin feature/AmazingFeature`)
+1. **Fork** repository ini
+2. Buat **branch** baru buat fitur kamu (`git checkout -b feature/fitur-keren`)
+3. **Commit** perubahan kamu (`git commit -m 'Tambah fitur keren'`)
+4. **Push** ke branch kamu (`git push origin feature/fitur-keren`)
 5. Buka **Pull Request**
 
 ### Code Style
 
-- Gunakan **Laravel Pint** untuk formatting PHP
-- Gunakan **Prettier** untuk formatting JavaScript/TypeScript
-- Ikuti **PSR-12** coding standards
-- Tulis **tests** untuk fitur baru
+- Pakai **Laravel Pint** buat format PHP
+- Pakai **Prettier** buat format JavaScript/TypeScript
+- Ikutin **PSR-12** coding standards
+- Tulis **tests** buat fitur baru
 
 ```bash
 # Format PHP
@@ -604,17 +604,18 @@ npm run format
 
 ## 📝 Changelog
 
-### Version 1.0.0 (2024)
+### Version 1.0.0
 
-#### Added
+#### Yang Udah Ada
 - ✅ Sistem autentikasi lengkap (login/logout)
 - ✅ CRUD manajemen barang
-- ✅ UI modern dengan dark mode support
+- ✅ UI modern dengan dark mode
 - ✅ Form validation
-- ✅ Rate limiting untuk login
+- ✅ Rate limiting buat login
 - ✅ Responsive design
+- ✅ Support PostgreSQL
 
-#### Security
+#### Keamanan
 - 🔒 CSRF protection
 - 🔒 Password hashing
 - 🔒 Session management
@@ -630,13 +631,13 @@ Aplikasi ini menggunakan lisensi **MIT License**.
 
 ## 👨‍💻 Author
 
-Dibuat dengan ❤️ menggunakan Laravel dan React
+Dibuat pakai Laravel dan React
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 Credits
 
-- [Laravel](https://laravel.com) - Framework PHP yang luar biasa
+- [Laravel](https://laravel.com) - Framework PHP yang mantap
 - [React](https://react.dev) - Library UI modern
 - [Inertia.js](https://inertiajs.com) - Modern monolith approach
 - [Tailwind CSS](https://tailwindcss.com) - Utility-first CSS framework
@@ -645,9 +646,7 @@ Dibuat dengan ❤️ menggunakan Laravel dan React
 
 <div align="center">
 
-**⭐ Jika project ini membantu, berikan star! ⭐**
-
-Made with ❤️ and ☕
+**⭐ Kalo project ini membantu, kasih star ya! ⭐**
 
 </div>
 
